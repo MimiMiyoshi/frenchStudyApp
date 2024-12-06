@@ -10,7 +10,7 @@
 
 ## ③DEMO
 
-デプロイしている場合は URL を記入（任意）
+[デプロイしている場合は URL を記入（任意）](https://mimimiyoshi.github.io/frenchStudyApp/)
 
 ## ④ 作ったアプリケーション用の ID または Password がある場合
 
