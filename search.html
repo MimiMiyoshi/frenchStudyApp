@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SearchingPage</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <div id="register-screen" class="screen">
+      <div id="background"></div>
+      <div id="content">
+        <h1>単語を検索しましょ！</h1>
+        <div>
+          <!-- <label for="search-box">単語を入力:</label> -->
+          <input type="text" id="search-box" placeholder="検索する単語を入力" />
+        </div>
+        <div>
+          <button id="search-btn">検索</button>
+        </div>
+        <div id="search-results"></div>
+        <div>
+          <button id="goNotepad" onclick="location.href='notepad.html'">単語帳を開く</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- <script type="module" src="js/search.js"></script> -->
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module">
+      import { GoogleGenerativeAI } from "@google/generative-ai";
+
+      // Fetch your API_KEY
+      const API_KEY = "";
+      // Reminder: This should only be for local testing
+
+      // Access your API key (see "Set up your API key" above)
+      const genAI = new GoogleGenerativeAI(API_KEY);
+
+      // ...
+
+      // The Gemini 1.5 models are versatile and work with most use cases
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      // ...
+      // 検索ボタンのクリックイベント
+      document
+        .getElementById("search-btn")
+        .addEventListener("click", async () => {
+          // 入力された単語を取得
+          const query = document.getElementById("search-box").value.trim();
+          const resultsDiv = document.getElementById("search-results");
+
+          if (query === "") {
+            console.log("検索ボックスが空です。単語を入力してください。");
+            resultsDiv.textContent =
+              "検索ボックスが空です。単語を入力してください。";
+            return;
+          }
+
+          try {
+            console.log(`検索中: ${query}`);
+
+            // Gemini APIで単語の意味を取得
+            const result = await model.generateContent(
+              ` "${query}" は、フランス語の単語もしくはフレーズです。
+               日本語で品詞と意味を簡潔に教えてください。`
+            );
+            const response = await result.response;
+            const text = response.text();
+
+            resultsDiv.innerHTML =
+              `<p>${text}</p>` || "意味が見つかりませんでした。";
+          } catch (error) {
+            console.error("エラーが発生しました:", error);
+            resultsDiv.textContent = `エラー: ${error.message}`;
+          }
+        });
+
+      // ページ読み込み後にスクリプトを実行
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("ページが読み込まれました。createDotを開始します。");
+        // ドットを生成して背景に追加する関数
+        function createDot() {
+          const background = document.getElementById("background");
+
+          // 背景レイヤーが見つからない場合はエラーを表示
+          if (!background) {
+            console.error("背景レイヤー (#background) が見つかりません。");
+            return;
+          }
+
+          const dot = document.createElement("div");
+          dot.classList.add("dot");
+
+          // ランダムなサイズと位置
+          const size = Math.random() * 10 + 5; // 5px〜15pxのサイズ
+          dot.style.width = `${size}px`;
+          dot.style.height = `${size}px`;
+          dot.style.left = `${Math.random() * 100}vw`; // 画面幅のランダムな位置
+          dot.style.animationDuration = `${Math.random() * 5 + 5}s`; // 5〜10秒で落下
+
+          // 背景に追加
+          background.appendChild(dot);
+
+          // 一定時間後にドットを削除
+          setTimeout(() => {
+            background.removeChild(dot);
+          }, 10000); // アニメーション終了後に削除
+        }
+
+        // ドットを定期的に生成
+        setInterval(createDot, 500); // 0.5秒ごとにドットを生成
+      });
+    </script>
+  </body>
+</html>
