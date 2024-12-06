@@ -35,4 +35,4 @@
 - [感想]
 - [参考記事]
   - 1. [https://goworkship.com/magazine/css-javascript-animated-backgrounds/]
-  - 2. [URL をここに記入]
+  - 2. [https://bel-itigo.com/gemini-json-mode-js/]
